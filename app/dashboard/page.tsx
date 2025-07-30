@@ -32,7 +32,15 @@ export default function Dashboard() {
   const [saveMsg, setSaveMsg] = useState('')
   const [isGuest, setIsGuest] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [pitchHistory, setPitchHistory] = useState<any[]>([])
+interface PitchItem {
+  id: string
+  name: string
+  pitch: string
+  [key: string]: string
+}
+
+const [pitchHistory, setPitchHistory] = useState<PitchItem[]>([])
+
   const [showHistory, setShowHistory] = useState(false)
 
   useEffect(() => {
@@ -91,9 +99,14 @@ export default function Dashboard() {
     try {
       const response = await axios.post('/api/generate', formData)
       setPitch(response.data.pitch)
-    } catch (err) {
-      setMessage('Error generating pitch.')
-    } finally {
+    }catch (err) {
+  if (err instanceof Error) {
+    console.error(err.message)
+  } else {
+    console.error('Unknown error occurred.')
+  }
+}
+finally {
       setLoading(false)
     }
   }
@@ -259,7 +272,7 @@ export default function Dashboard() {
               </button>
             </div>
             {saveMsg && <p className="text-sm mt-2">{saveMsg}</p>}
-            {isGuest && <p className="text-sm mt-2 text-yellow-600">⚠️ Guest Mode — settings won't be saved.</p>}
+            {isGuest && <p className="text-sm mt-2 text-yellow-600">⚠️ Guest Mode — settings would not be saved.</p>}
           </section>
         )}
 
@@ -276,7 +289,7 @@ export default function Dashboard() {
               </label>
               <input
                 name={field}
-                value={(formData as any)[field]}
+                value={(formData as Record<string, string>)[field]}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded text-sm bg-[#9ddfff]
  dark:bg-gray-900 dark:border-black text-black dark:text-white"
