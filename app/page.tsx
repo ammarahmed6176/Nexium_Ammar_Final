@@ -53,7 +53,7 @@ export default function HomePage() {
    const { error } = await supabase.auth.signInWithOtp({
   email,
   options: {
-    shouldCreateUser: false,
+    shouldCreateUser: true,
     emailRedirectTo: `${location.origin}/auth/callback`, // ✅ ensures proper redirection
   },
 })
