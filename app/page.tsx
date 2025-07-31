@@ -44,20 +44,23 @@ export default function HomePage() {
     }
   }, [router])
 
-  const handleLogin = async () => {
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setMessage('❌ Enter a valid email')
-      return
-    }
+const handleLogin = async () => {
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    setMessage('❌ Enter a valid email')
+    return
+  }
 
-   const { error } = await supabase.auth.signInWithOtp({
-  email,
-  options: {
-    shouldCreateUser: true,
-    emailRedirectTo: `${location.origin}/auth/callback`, // ✅ ensures proper redirection
-  },
-})
+  const redirectUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    (typeof window !== 'undefined' ? window.location.origin : '')
 
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: `${redirectUrl}/auth/callback`, // ✅ Correct and dynamic
+    },
+  })
     if (error) {
       setMessage(`❌ ${error.message}`)
     } else {
